@@ -26,9 +26,9 @@ Every internal link is relative, so the site works from any mount point — the
 domain root, a `user.github.io/repo/` project page, or a local server pointed at
 a parent directory. The only absolute URLs are the two Open Graph tags, which
 have to be absolute for a crawler to resolve them, and the outbound links —
-`moosed.me` and the three museum open-access pages the gallery credit points
-at. Outbound links are not requests: nothing is fetched from those hosts unless
-a reader clicks, so the privacy page's claim holds.
+`moosed.me` and the six museum pages the gallery credit points at. Outbound
+links are not requests: nothing is fetched from those hosts unless a reader
+clicks, so the privacy page's claim holds.
 
 ## Working on it locally
 
@@ -216,6 +216,4 @@ making.
 ## Things this site deliberately doesn't have
 
 No newsletter, no roadmap, no "coming soon", no press kit, no analytics, and no
-cookie banner (there are no cookies to consent to). No video either, and no
-placeholder standing in for one — nothing on the page announces that something
-is coming.
+cookie banner (there are no cookies to consent to).
