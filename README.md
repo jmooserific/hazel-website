@@ -26,9 +26,9 @@ Every internal link is relative, so the site works from any mount point — the
 domain root, a `user.github.io/repo/` project page, or a local server pointed at
 a parent directory. The only absolute URLs are the two Open Graph tags, which
 have to be absolute for a crawler to resolve them, and the outbound links —
-`moosed.me` and the three museum open-access pages the gallery credit points
-at. Outbound links are not requests: nothing is fetched from those hosts unless
-a reader clicks, so the privacy page's claim holds.
+`moosed.me` and the six museum pages the gallery credit points at. Outbound
+links are not requests: nothing is fetched from those hosts unless a reader
+clicks, so the privacy page's claim holds.
 
 ## Working on it locally
 
@@ -65,12 +65,13 @@ If a token here ever disagrees with the app, the app wins.
 | `assets/og.png` | The same engine and seed, 12 pieces, rendered flat for link previews. Far fewer pieces because a 63-piece cut turns to mush at thumbnail size. |
 | `assets/icon.svg`, `assets/apple-touch-icon.png`, `assets/favicon.png` | The app icon: `AppIcon.icon/Assets/icon_piece.svg` at the placement and gradient `icon.json` specifies. |
 | *(inline in `index.html`)* | The wordmark, outlined. Same string, face and per-pair kern table as `Joinery/Home/HomeWordmark.swift`. |
-| `assets/piece.{webp,jpg}` | Pieces close up, rims shaded from one direction — the relief, in "The pieces are the point". |
-| `assets/generate.{webp,jpg}` | The cut mid-animation: the left of the picture already in pieces, the grid on the right still plain with knobs pushing out along it. |
-| `assets/presets.{webp,jpg}` | The create sheet on Easy: picture, credit, and the three presets. Pairs with `custom`. |
+| `assets/home-iphone.{webp,jpg}`, `assets/home-ipad.{webp,jpg}` | Home on each device, as a `.devices` pair under the opening paragraph — the "on iPhone and iPad" of that paragraph, shown. |
+| `assets/piece.{webp,jpg}` | Pieces close up with the picture popover open, rims shaded from one direction — the relief, in "The pieces are the point". |
+| `assets/generate.{webp,jpg}` | The cut mid-animation on iPad: the left of the picture already in pieces, the grid on the right still plain, the orange cutting heads between. |
+| `assets/presets.{webp,jpg}` | The create sheet on Medium: the four difficulty tiles, the three chips under them, then the picture's text. Pairs with `custom`. |
 | `assets/custom.{webp,jpg}` | The same sheet on Custom, with the piece count, rotation and snap distance each on its own control. |
-| `assets/joinery.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 3:22, silent, 552×1200, no audio track at all. |
-| `assets/joinery-poster.jpg` | The frame at 0:18 of that recording, where the cut has just finished across the whole picture. Shown until someone presses play. |
+| `assets/joinery.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 2:03, 496×1080, with the app's sound as a stereo AAC track. |
+| `assets/joinery-poster.jpg` | The frame at 1:15 of that recording: the puzzle part solved, the border and the bridge in and loose pieces scattered around it. Shown until someone presses play. |
 
 ### Regenerating the cut
 
@@ -123,40 +124,55 @@ shows the cut being drawn and the puzzle being solved, which is the whole
 argument, before a word of the argument is made.
 
 `preload="none"` and a poster frame, so a visit that never presses play costs
-one 83KB JPEG rather than 6MB of video. There is no `autoplay`: the page has
-one action on it and this isn't it. The recording has no audio track, so
-`muted` would be decoration.
+one 36KB JPEG rather than 6.7MB of video. There is no `autoplay`: the page has
+one action on it and this isn't it, and the recording has sound, so an
+autoplay would have to be `muted` to be allowed at all and would show the app
+with the half of it that's audio switched off.
 
 MP4 only. The usual reason to ship a WebM beside it is Safari, and Safari is the
 one browser guaranteed to have H.264 — a second encode would be bytes in the
 repository for no browser that needs them. Self-hosted, no player library and
 no script, or the privacy page stops being true.
 
-A simulator screen recording comes out **anamorphic**: 1206×1080 coded pixels
-with a `pasp` atom of 180:437, which displays as 496×1080. `scale` works on the
-coded size and ignores that, so the target dimensions have to be given
-outright, along with `setsar=1` to drop the correction once it has been applied:
+**Keep the audio.** The recording carries the app's sound, which is half of
+what the video shows, so the encode passes the audio through untouched with
+`-c:a copy` and never uses `-an`. The source's track is already AAC at around
+46kbps; re-encoding it would only lose quality for no saving.
+
+Check the source with `ffprobe` first. The current recording arrives as
+496×1080 with square pixels, and goes out at that size. A raw simulator capture
+can instead come out **anamorphic** (1206×1080 coded, with a `pasp` atom of
+180:437 that displays as 496×1080). `scale` works on the coded size and ignores
+that, so for one of those add `scale=496:1080,setsar=1` in front of the `fps`
+filter.
 
 ```bash
-ffmpeg -i ScreenRecording.mp4 \
-  -vf "scale=552:1200,setsar=1,fps=30" \
+ffmpeg -i "iPhone - Full Puzzle.mp4" \
+  -vf "fps=30" \
   -c:v libx264 -profile:v high -crf 27 -preset slow \
-  -pix_fmt yuv420p -movflags +faststart -an assets/joinery.mp4
+  -pix_fmt yuv420p -c:a copy -movflags +faststart assets/joinery.mp4
 
-ffmpeg -ss 18 -i assets/joinery.mp4 -frames:v 1 -q:v 3 assets/joinery-poster.jpg
+ffmpeg -ss 75 -i assets/joinery.mp4 -frames:v 1 -q:v 3 assets/joinery-poster.jpg
 ```
 
-552×1200 is twice the 272px the video renders at, and holds the 1320:2868 shape
-of the screen it came off. 60fps down to 30 halves the bitrate and costs
-nothing: the only motion is a finger dragging cardboard. `+faststart` puts the
-index at the front so it plays before it has finished arriving; `-an` makes the
-absent audio track explicit.
+496×1080 is 1.8× the 272px the video renders at. The last recording was scaled
+up to 552×1200 to make an even 2×, but upscaling adds no detail, only bytes, so
+this one ships at the size it was captured. `width`/`height` on the `<video>`
+match it. 60fps down to 30 halves the bitrate and costs nothing: the only
+motion is a finger dragging cardboard. `+faststart` puts the index at the front
+so it plays before it has finished arriving.
+
+The poster is a puzzle in progress rather than the cut. The cut in this
+recording pans in close across the picture, so no single frame of it shows the
+whole thing. A half-built puzzle with pieces lying loose around it says what the
+app is at a glance, before anyone presses play.
 
 ### Replacing the screenshots
 
-Each is a `<picture>` with a WebP source and a JPEG fallback, exported 660px
-wide — half of the 1320px iPhone 17 Pro Max capture, and well over twice the
-280px each one renders at.
+Each is a `<picture>` with a WebP source and a JPEG fallback. iPhone shots
+(1206×2622, an iPhone 17 Pro) go out at 660×1435; iPad shots (1640×2360) at
+984×1416, which is 0.6 of the capture and the same 2.4× over the width they
+render at.
 
 Ship the **whole screen**, uncropped. Cropping to the content was the earlier
 rule and it was wrong: a crop is a claim about what the app looks like that the
@@ -166,16 +182,35 @@ reading measure runs past 1200px — so a screen is shown at 17rem, a phone's
 width, centered in the column, and renders at 272px.
 
 `.shot` is one screen. `.shots` is a pair side by side at that same width, for
-shots that only argue together — the presets and the three dials behind them
-are the only pair left. Reach for `.shot` unless the second one is doing work
-the first can't.
+shots that only argue together — the presets and the three dials behind them.
+Reach for `.shot` unless the second one is doing work the first can't.
+
+An iPad screen is squarer, so at a phone's width it would come out shorter
+than the phone shots around it and read as the smaller screen. `.shot.ipad`
+widens a single one to 25.5rem, which lands it at a phone shot's height.
+`.shots.devices` is the iPhone-and-iPad pair: its columns are in the ratio of
+the two aspect ratios (46fr 69.5fr), so both come out the same height. If a
+capture size changes, those numbers change with it.
 
 ```bash
-magick shot.png -resize 660x1434 -strip -quality 82 -sampling-factor 4:2:0 -interlace Plane assets/NAME.jpg
-magick shot.png -resize 660x1434 -strip -define webp:method=6 -quality 80 assets/NAME.webp
+magick shot.png -resize 660x -strip -quality 82 -sampling-factor 4:2:0 -interlace Plane assets/NAME.jpg
+magick shot.png -resize 660x -strip -define webp:method=6 -quality 80 assets/NAME.webp
 ```
 
-`width`/`height` on the `<img>` stay 660×1434, so the page reserves the right
+Check the capture's color profile first with `sips -g profile shot.png`. Most
+simulator captures come out tagged sRGB, and the commands above are right for
+those. Some come out **Display P3**, and `-strip` throws that profile away, so
+the P3 values get read as sRGB and the picture goes visibly muddy, the reds and
+greens especially. For a P3 capture, pull the profile out and put it back after
+the strip, on both the JPEG and the WebP; browsers honor it in both:
+
+```bash
+magick shot.png /tmp/shot.icc
+magick shot.png -resize 660x -strip -profile /tmp/shot.icc -quality 82 -sampling-factor 4:2:0 -interlace Plane assets/NAME.jpg
+magick shot.png -resize 660x -strip -profile /tmp/shot.icc -define webp:method=6 -quality 80 assets/NAME.webp
+```
+
+`width`/`height` on the `<img>` match the export (660×1435, or 984×1416 for iPad), so the page reserves the right
 space and doesn't reflow while they load. All of them are `loading="lazy"`;
 they all sit below the fold. The video does not — it is the first thing under
 the subtitle — but `preload="none"` means only its poster is fetched.
@@ -216,6 +251,4 @@ making.
 ## Things this site deliberately doesn't have
 
 No newsletter, no roadmap, no "coming soon", no press kit, no analytics, and no
-cookie banner (there are no cookies to consent to). No video either, and no
-placeholder standing in for one — nothing on the page announces that something
-is coming.
+cookie banner (there are no cookies to consent to).
