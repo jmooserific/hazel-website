@@ -273,7 +273,10 @@ figcaption {
  * width that brings it to a phone shot's height, so it reads as the bigger
  * screen it is rather than a smaller one. `.devices` is the phone-and-iPad
  * pair: the columns are in the ratio of the two screens' aspect ratios
- * (660/1435 and 984/1416), which puts both at the same height. */
+ * (660/1435 and 984/1416), which puts both at the same height. The phone keeps
+ * the 17rem every other phone shot has, so the iPad beside it comes out at
+ * that full height too, and the pair takes the wide column to fit: the point
+ * of the pair is how much more room the iPad gives you. */
 .shot,
 .shots {
   margin-top: 2.5rem;
@@ -299,7 +302,10 @@ figcaption {
 
 .shot.ipad picture { max-width: 25.5rem; }
 
-.shots.devices { grid-template-columns: 46fr 69.5fr; }
+.shots.devices {
+  grid-template-columns: 46fr 69.5fr;
+  max-width: 43.7rem;
+}
 
 /* The recording is that same screen, at that same width. */
 .clip { margin-top: 2.25rem; }
