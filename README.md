@@ -26,7 +26,7 @@ Every internal link is relative, so the site works from any mount point — the
 domain root, a `user.github.io/repo/` project page, or a local server pointed at
 a parent directory. The only absolute URLs are the two Open Graph tags, which
 have to be absolute for a crawler to resolve them, and the outbound links —
-`moosed.me` and the six museum pages the gallery credit points at. Outbound
+TestFlight and the six museum pages the gallery credit points at. Outbound
 links are not requests: nothing is fetched from those hosts unless a reader
 clicks, so the privacy page's claim holds.
 
