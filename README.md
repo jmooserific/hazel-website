@@ -1,4 +1,4 @@
-# joinery.moosed.me
+# hazelpuzzle.com
 
 Three static pages. Plain HTML and CSS, no build step, no JavaScript, and no
 request to any other domain — the privacy page claims the last one, so it has
@@ -57,6 +57,10 @@ shipped app's, and each is commented with its source:
 
 If a token here ever disagrees with the app, the app wins.
 
+The app is called Hazel, but its repo (`../Hazel`) keeps `Joinery` as the
+internal name of its targets, module and source folder, so paths into it like
+`Joinery/Home/` are correct as written.
+
 ## Assets
 
 | File | What it is |
@@ -70,14 +74,14 @@ If a token here ever disagrees with the app, the app wins.
 | `assets/generate.{webp,jpg}` | The cut mid-animation on iPad: the left of the picture already in pieces, the grid on the right still plain, the orange cutting heads between. |
 | `assets/presets.{webp,jpg}` | The create sheet on Medium: the four difficulty tiles, the three chips under them, then the picture's text. Pairs with `custom`. |
 | `assets/custom.{webp,jpg}` | The same sheet on Custom, with the piece count, rotation and snap distance each on its own control. |
-| `assets/joinery.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 2:03, 496×1080, with the app's sound as a stereo AAC track. |
-| `assets/joinery-poster.jpg` | The frame at 1:15 of that recording: the puzzle part solved, the border and the bridge in and loose pieces scattered around it. Shown until someone presses play. |
+| `assets/hazel.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 2:03, 496×1080, with the app's sound as a stereo AAC track. |
+| `assets/hazel-poster.jpg` | The frame at 1:15 of that recording: the puzzle part solved, the border and the bridge in and loose pieces scattered around it. Shown until someone presses play. |
 
 ### Regenerating the cut
 
 `tools/cut-export` is a small executable that links the app's `PuzzleEngine` and
 prints one cut as SVG. It expects the app checkout beside this one
-(`../Joinery`). It is a development tool; the published site has no build step.
+(`../Hazel`). It is a development tool; the published site has no build step.
 
 ```bash
 swift run --package-path tools/cut-export CutExport --width 1200 --height 800 --pieces 64 --seed 9
@@ -98,8 +102,8 @@ meant to be there. Seed 9 at 64 has no blanks; seeds 6, 11 and 12 have two.
 
 `tools/wordmark-export` rebuilds the logotype from the app's kern table. It is
 outlines, not live text, for two reasons: the kerning is a *per-pair* table
-(round-to-round joins want the most negative, `r`→`y` goes positive so the r's
-arm clears the y's diagonal), which no single `letter-spacing` can express; and
+(the z's open diagonals leave the most air, so `a`→`z` and `z`→`e` close
+hardest, while the stem-facing pairs `H`→`a` and `e`→`l` ease), which no single `letter-spacing` can express; and
 SF Pro can't be shipped as a webfont, so live text would fall back to Segoe UI
 or Roboto off Apple platforms and the SF-tuned kerning would land on the wrong
 letterforms.
@@ -116,7 +120,7 @@ Re-run this if `HomeWordmark.kernEm` changes in the app.
 
 ### The walkthrough video
 
-`assets/joinery.mp4` sits directly under the subtitle, in the reading column
+`assets/hazel.mp4` sits directly under the subtitle, in the reading column
 rather than the breakout — it is a phone screen, so it takes a phone's width
 and is centered in the column, and blown up to the full measure it would be
 over 1200px tall. It is first because it is the strongest thing on the page: it
@@ -150,9 +154,9 @@ filter.
 ffmpeg -i "iPhone - Full Puzzle.mp4" \
   -vf "fps=30" \
   -c:v libx264 -profile:v high -crf 27 -preset slow \
-  -pix_fmt yuv420p -c:a copy -movflags +faststart assets/joinery.mp4
+  -pix_fmt yuv420p -c:a copy -movflags +faststart assets/hazel.mp4
 
-ffmpeg -ss 75 -i assets/joinery.mp4 -frames:v 1 -q:v 3 assets/joinery-poster.jpg
+ffmpeg -ss 75 -i assets/hazel.mp4 -frames:v 1 -q:v 3 assets/hazel-poster.jpg
 ```
 
 496×1080 is 1.8× the 272px the video renders at. The last recording was scaled

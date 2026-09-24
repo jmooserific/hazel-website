@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
   name: "CutExport",
   platforms: [.macOS(.v14)],
-  dependencies: [.package(path: "../../../Joinery/PuzzleEngine")],
+  dependencies: [.package(path: "../../../Hazel/PuzzleEngine")],
   targets: [
     .executableTarget(
       name: "CutExport",

@@ -3,12 +3,12 @@ import CoreText
 import Foundation
 
 // Exports the app's wordmark as outlines. Same string, same face, same kern
-// table as Joinery/Home/HomeWordmark.swift — the per-pair values are the whole
-// point of the thing, so they're copied here rather than approximated, and a
-// change to them there is a re-run of this.
+// table as Joinery/Home/HomeWordmark.swift in the app repo — the per-pair
+// values are the whole point of the thing, so they're copied here rather than
+// approximated, and a change to them there is a re-run of this.
 
-let text = "Joinery"
-let kernEm: [CGFloat] = [-0.050, -0.042, -0.036, -0.038, -0.028, 0.012, 0]
+let text = "Hazel"
+let kernEm: [CGFloat] = [-0.030, -0.046, -0.044, -0.030, 0]
 
 func font(size: CGFloat) -> NSFont { .systemFont(ofSize: size, weight: .bold) }
 
@@ -75,5 +75,5 @@ FileHandle.standardError.write(
     .data(using: .utf8)!)
 
 print("""
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 \(n(box.width)) \(n(box.height))" role="img" aria-label="Joinery"><path d="\(d)" fill="currentColor"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 \(n(box.width)) \(n(box.height))" role="img" aria-label="Hazel"><path d="\(d)" fill="currentColor"/></svg>
   """)
