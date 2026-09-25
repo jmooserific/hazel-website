@@ -201,31 +201,32 @@ a:focus-visible {
   border-radius: 1px;
 }
 
-/* The one place the accent does any work: the single action on the page. It is
- * the app's own Create button — accent fill, white label, full capsule — which
- * is the control this link is asking you to go and press. The footer keeps the
- * same words as a plain link; there is one button on the page, or it stops
- * being the action. */
+/* The single action on the page: Apple's App Store badge, used as supplied —
+ * no recolouring, no resizing below 40px tall, and a quarter of its height in
+ * clear space all round (the margin and padding here more than cover it). The
+ * footer keeps the same href as a plain link; there is one badge on the page,
+ * or it stops being the action. */
 .action {
   margin-top: 2.25rem;
   text-align: center;
 }
 
-.button {
+.badge {
   display: inline-block;
-  padding: 0.85rem 2.25rem;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  text-decoration: none;
-  border-radius: 999px;
+  padding: 12px;
+  line-height: 0;
 }
 
-.button:hover { background: var(--accent-deep); }
+.badge img {
+  display: block;
+  width: auto;
+  height: 48px;
+}
 
-.button:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+.badge:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-radius: 8px;
 }
 
 /* Figures ---------------------------------------------------------------- */

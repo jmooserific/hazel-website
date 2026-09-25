@@ -1,9 +1,10 @@
 # hazelpuzzle.com
 
 Three static pages. Plain HTML and CSS, no build step, no JavaScript, and no
-request to any other domain — the privacy page claims the last one, so it has
-to keep being true. Don't add a font host, an analytics snippet, or a CDN link
-without rewriting that page first.
+request to any other domain except the one Safari makes for the Smart App
+Banner. The privacy page claims that, exception included, so it has to keep
+being true. Don't add a font host, an analytics snippet, or a CDN link without
+rewriting that page first.
 
 Served by GitHub Pages from the repository root. `CNAME` holds the domain;
 `.nojekyll` keeps Jekyll out of the way.
@@ -26,7 +27,7 @@ Every internal link is relative, so the site works from any mount point — the
 domain root, a `user.github.io/repo/` project page, or a local server pointed at
 a parent directory. The only absolute URLs are the two Open Graph tags, which
 have to be absolute for a crawler to resolve them, and the outbound links —
-TestFlight and the six museum pages the gallery credit points at. Outbound
+the App Store and the six museum pages the gallery credit points at. Outbound
 links are not requests: nothing is fetched from those hosts unless a reader
 clicks, so the privacy page's claim holds.
 
@@ -233,24 +234,27 @@ again: they are one device pixel wide in the capture and the first thing to go
 soft, and a shot resized to 544 has visibly fewer of them than one resized to
 660 and drawn at the same size.
 
-## The TestFlight link
+## The App Store link
 
-It appears twice in `index.html` — once after the opening two paragraphs, once
-in the footer — with the same href and the same words in both, on purpose. At
-launch both become "On the App Store" pointing at the product page. Two lines,
-and an HTML comment above each marking which is which.
+It appears twice in `index.html`: once after the opening two paragraphs, once
+in the footer. Both use the same href, and there's an HTML comment above each
+marking which is which.
 
-Only the treatment differs. The first is `.button`: the app's own Create
-control, accent fill and white label in a full capsule, centered, because it is
-the page's one action and it is asking you to go and press exactly that button.
-The footer one is a plain link among the other plain links, a way back to the
-first rather than a second ask. If a second button ever appears on the page,
-neither of them is the action any more.
+The first is Apple's "Download on the App Store" badge, as supplied by Apple
+Marketing Tools (toolbox.marketingtools.apple.com): `assets/app-store-black.svg`
+on light and `assets/app-store-white.svg` on dark, switched by a `<picture>`
+media query. Apple's rules are to use it unmodified, at least 40px tall, with a
+quarter of its height in clear space around it. It's drawn at 48px with 12px of
+padding. The footer one is a plain "On the App Store" link among the other plain
+links, a way back to the first rather than a second ask. If a second badge ever
+appears on the page, neither of them is the action any more.
 
-The white label on `--accent` is the app's pairing, not a web contrast ratio —
-it comes out around 2.2:1. Swapping `color: #fff` for `color: var(--ink)` in
-`.button` takes it to about 8:1 and keeps the fill, if that trade is ever worth
-making.
+All three pages also carry a Smart App Banner
+(`<meta name="apple-itunes-app" content="app-id=6802787791">`). The page doesn't
+fetch anything for it, but Safari on iOS and iPadOS asks Apple for the app's
+name, icon and rating to draw it. That's the one request to another domain, and
+the privacy page's "This website" section says so. Remove the tag and that
+sentence together, or neither.
 
 ## Things this site deliberately doesn't have
 
