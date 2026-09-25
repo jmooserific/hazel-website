@@ -104,14 +104,31 @@ h1 {
  * same on a machine that has never had SF Pro on it. `currentColor`, so it
  * takes the ink in both appearances. */
 .wordmark {
+  --wordmark-width: 11.25rem;
+  /* The H's height: its stems run the full 35.32 units of the 116.44-wide
+   * outline, while the round letters overshoot below it. */
+  --cap-height: calc(var(--wordmark-width) * 35.32 / 116.44);
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--cap-height) * 0.3);
   margin: 0;
   line-height: 0;
 }
 
 .wordmark svg {
   display: block;
-  width: 7.5rem;
+  width: var(--wordmark-width);
   height: auto;
+}
+
+/* The app icon, cap height, top-aligned with the H so the two share a top
+ * and bottom edge. The export is full-bleed square; the radius stands in for
+ * the Home Screen mask. */
+.wordmark .icon {
+  display: block;
+  width: var(--cap-height);
+  height: var(--cap-height);
+  border-radius: 22.5%;
 }
 
 /* The heading's real text. The outlines carry the look; this carries the
