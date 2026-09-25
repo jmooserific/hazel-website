@@ -49,10 +49,8 @@ shipped app's, and each is commented with its source:
 
 - Colors, rules and the image radius — `docs/design/design_handoff_home_view/README.md`
   and `Joinery/Home/HomeTray.swift` (`TrayPalette`) in the app repo.
-- The accent — the app icon's own gradient in `AppIcon.icon/icon.json`, whose
-  lower stop converts from Display P3 to exactly `#FF9500`, which is
-  `systemOrange`, which is `AccentColor.colorset`. Light and dark use the
-  system's two values for it.
+- The accent — `AccentColor.colorset`, Marigold `#E8A200`. The app gives it
+  one value for both appearances, so the site does too.
 - Dark mode reuses the app's own pairing: the ink becomes the ground, and text
   on it takes the app's "text on felt" colors.
 
@@ -68,15 +66,39 @@ internal name of its targets, module and source folder, so paths into it like
 |---|---|
 | *(inline in `index.html`)* | A real cut from `PuzzleEngine`, 63 pieces (a 64 target lands on a 7×9 grid), seed 9. Drawn with `stroke="currentColor"` so CSS themes it. Sits in the reading column beside the paragraph that explains it. |
 | `assets/og.png` | The same engine and seed, 12 pieces, rendered flat for link previews. Far fewer pieces because a 63-piece cut turns to mush at thumbnail size. |
-| `assets/icon.svg`, `assets/apple-touch-icon.png`, `assets/favicon.png` | The app icon: `AppIcon.icon/Assets/icon_piece.svg` at the placement and gradient `icon.json` specifies. |
+| `assets/apple-touch-icon.png`, `assets/favicon.png` | The app icon, exported from `AppIcon.icon` by Icon Composer's `ictool`. See *Regenerating the icon*. |
 | *(inline in `index.html`)* | The wordmark, outlined. Same string, face and per-pair kern table as `Joinery/Home/HomeWordmark.swift`. |
 | `assets/home-iphone.{webp,jpg}`, `assets/home-ipad.{webp,jpg}` | Home on each device, as a `.devices` pair under the opening paragraph — the "on iPhone and iPad" of that paragraph, shown. |
 | `assets/piece.{webp,jpg}` | Pieces close up with the picture popover open, rims shaded from one direction — the relief, in "The pieces are the point". |
 | `assets/generate.{webp,jpg}` | The cut mid-animation on iPad: the left of the picture already in pieces, the grid on the right still plain, the orange cutting heads between. |
 | `assets/presets.{webp,jpg}` | The create sheet on Medium: the four difficulty tiles, the three chips under them, then the picture's text. Pairs with `custom`. |
 | `assets/custom.{webp,jpg}` | The same sheet on Custom, with the piece count, rotation and snap distance each on its own control. |
-| `assets/hazel.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 2:03, 496×1080, with the app's sound as a stereo AAC track. |
-| `assets/hazel-poster.jpg` | The frame at 1:15 of that recording: the puzzle part solved, the border and the bridge in and loose pieces scattered around it. Shown until someone presses play. |
+| `assets/hazel.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 2:15, 496×1080, with the app's sound as a stereo AAC track. |
+| `assets/hazel-poster.jpg` | Frame 2004 of the source recording (0:34.8): zoomed in on a few joined pieces of a Monet, brushwork and signature close up. Shown until someone presses play. |
+
+### Regenerating the icon
+
+The icon's background is a blended image (`AppIcon.icon/Assets/bg.png`) and the
+piece has Liquid Glass on it, so there is no SVG version. Both PNGs come from
+Icon Composer's own renderer. The `ictool` on the `PATH` is `actool` under
+another name. The one that exports is inside Icon Composer:
+
+```bash
+ICTOOL="$(xcode-select -p)/../Applications/Icon Composer.app/Contents/Executables/ictool"
+"$ICTOOL" ../Hazel/AppIcon.icon --export-image --output-file /tmp/icon.png \
+  --platform iOS --rendition Default --width 1024 --height 1024 --scale 1
+SRGB='/System/Library/ColorSync/Profiles/sRGB Profile.icc'
+sips --matchTo "$SRGB" /tmp/icon.png --out /tmp/icon-srgb.png
+sips --matchTo "$SRGB" ../Hazel/AppIcon.icon/Assets/bg.png --out /tmp/bg-srgb.png
+magick /tmp/bg-srgb.png /tmp/icon-srgb.png -composite -resize 180x180 -strip assets/apple-touch-icon.png
+magick /tmp/icon-srgb.png -resize 32x32 -strip assets/favicon.png
+```
+
+The export comes out masked to the squircle with transparent corners. That is
+right for the favicon, which a browser draws as it is. The touch icon goes over
+`bg.png` first, because iOS applies its own mask and would fill transparent
+corners with black. Both are converted from Display P3 to sRGB before `-strip`,
+for the reason given under *Replacing the screenshots*.
 
 ### Regenerating the cut
 
@@ -129,7 +151,7 @@ shows the cut being drawn and the puzzle being solved, which is the whole
 argument, before a word of the argument is made.
 
 `preload="none"` and a poster frame, so a visit that never presses play costs
-one 36KB JPEG rather than 6.7MB of video. There is no `autoplay`: the page has
+one 76KB JPEG rather than 11MB of video. There is no `autoplay`: the page has
 one action on it and this isn't it, and the recording has sound, so an
 autoplay would have to be `muted` to be allowed at all and would show the app
 with the half of it that's audio switched off.
@@ -148,29 +170,35 @@ Check the source with `ffprobe` first. The current recording arrives as
 496×1080 with square pixels, and goes out at that size. A raw simulator capture
 can instead come out **anamorphic** (1206×1080 coded, with a `pasp` atom of
 180:437 that displays as 496×1080). `scale` works on the coded size and ignores
-that, so for one of those add `scale=496:1080,setsar=1` in front of the `fps`
-filter.
+that, so for one of those add `-vf "scale=496:1080,setsar=1"` to the encode.
 
 ```bash
 ffmpeg -i "iPhone - Full Puzzle.mp4" \
-  -vf "fps=30" \
-  -c:v libx264 -profile:v high -crf 27 -preset slow \
-  -pix_fmt yuv420p -c:a copy -movflags +faststart assets/hazel.mp4
+  -c:v libx264 -profile:v high -crf 23 -preset slow \
+  -pix_fmt yuv420p -fps_mode passthrough -c:a copy -movflags +faststart assets/hazel.mp4
 
-ffmpeg -ss 75 -i assets/hazel.mp4 -frames:v 1 -q:v 3 assets/hazel-poster.jpg
+ffmpeg -i "iPhone - Full Puzzle.mp4" -vf "select=eq(n\,2004)" -fps_mode passthrough \
+  -frames:v 1 -q:v 3 assets/hazel-poster.jpg
 ```
 
 496×1080 is 1.8× the 272px the video renders at. The last recording was scaled
 up to 552×1200 to make an even 2×, but upscaling adds no detail, only bytes, so
 this one ships at the size it was captured. `width`/`height` on the `<video>`
-match it. 60fps down to 30 halves the bitrate and costs nothing: the only
-motion is a finger dragging cardboard. `+faststart` puts the index at the front
+match it. It keeps the capture's own frame rate, about 60fps and variable:
+`-fps_mode passthrough` copies every frame's timing rather than resampling.
+Dropping to 30fps saves almost nothing (7.1MB against 6.5MB at CRF 27), because
+most of each frame is still background and a repeated frame costs the encoder
+next to nothing. CRF 23 rather than 27 because 27 smears the brushwork in the
+close-ups, which is the one thing the page claims holds up close. It costs about
+4MB, and only for someone who presses play. `+faststart` puts the index at the front
 so it plays before it has finished arriving.
 
-The poster is a puzzle in progress rather than the cut. The cut in this
-recording pans in close across the picture, so no single frame of it shows the
-whole thing. A half-built puzzle with pieces lying loose around it says what the
-app is at a glance, before anyone presses play.
+The poster comes from the source recording by frame number, not from the
+encode by timestamp. The source is variable frame rate, and the 30fps encode
+keeps only about every other frame, so `-ss` on either one can land a frame or
+two away from the chosen one. It is a close-up: a few joined pieces of a Monet,
+near enough to see the brushwork and the signature, which is the page's
+argument about scans that hold up close.
 
 ### Replacing the screenshots
 

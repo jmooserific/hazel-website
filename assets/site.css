@@ -2,8 +2,8 @@
  *
  * Every token below is lifted from the shipped app: the colors and radii
  * from docs/design/design_handoff_home_view/README.md and
- * Joinery/Home/HomeTray.swift, the accent from the app icon's own gradient
- * (which resolves to systemOrange, the asset catalog's AccentColor). Nothing
+ * Joinery/Home/HomeTray.swift, the accent from the asset catalog's
+ * AccentColor (Marigold, one value for both appearances). Nothing
  * here was picked to look good on a web page in isolation.
  *
  * No @font-face, no @import, no external anything. The privacy page says this
@@ -19,8 +19,7 @@
   --panel: #F2F0EB;          /* TrayPalette.panelPaper */
   --line: rgba(25, 23, 18, 0.62);  /* the cut, drawn */
   --underline: rgba(25, 23, 18, 0.3);
-  --accent: #FF9500;         /* systemOrange / icon gradient, light */
-  --accent-deep: #E07E00;    /* the same orange pressed, for the button's hover */
+  --accent: #E8A200;         /* AccentColor, Marigold */
 
   --measure: 36rem;
   --inset: 0rem;             /* the cut's breakout; 0 until there's room for it */
@@ -39,8 +38,6 @@
     --panel: #332E28;        /* Felt base */
     --line: rgba(244, 241, 233, 0.55);
     --underline: rgba(244, 241, 233, 0.35);
-    --accent: #FF9F0A;       /* systemOrange, dark */
-    --accent-deep: #E08800;
   }
 }
 
