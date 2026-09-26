@@ -3,23 +3,31 @@
  * Every token below is lifted from the shipped app: the colors and radii
  * from docs/design/design_handoff_home_view/README.md and
  * Joinery/Home/HomeTray.swift, the accent from the asset catalog's
- * AccentColor (Marigold, one value for both appearances). Nothing
- * here was picked to look good on a web page in isolation.
+ * AccentColor (Marigold, one value for both appearances). The two papers
+ * are the app's Ground colorset moved in lightness only, and the secondary
+ * text is raised to clear AA on them; each says so where it's set. Nothing
+ * else was picked to look good on a web page in isolation.
  *
  * No @font-face, no @import, no external anything. The privacy page says this
  * site loads nothing from another domain, and that has to stay true.
  */
 
 :root {
-  --paper: #FFFDF7;          /* TrayPalette.paper */
+  /* The paper is the app's table, Ground #B0A28C, lifted to OKLCH L 0.96 and
+   * C 0.02 at its own hue (79°): the same warm tan, pale enough to read on. */
+  --paper: #F9F1E3;
   --ink: #191712;            /* Ink, primary */
-  --ink-2: rgba(25, 23, 18, 0.58);
-  --ink-3: rgba(25, 23, 18, 0.45); /* Ink, secondary */
+  /* The app's secondary ink is 0.45, which is 2.8:1 on this paper. These are
+   * raised until both tiers clear AA for body text: 6.3:1 and 4.8:1. */
+  --ink-2: rgba(25, 23, 18, 0.70);
+  --ink-3: rgba(25, 23, 18, 0.62); /* Ink, secondary */
   --rule: rgba(25, 23, 18, 0.14);  /* Rule */
   --panel: #F2F0EB;          /* TrayPalette.panelPaper */
   --line: rgba(25, 23, 18, 0.62);  /* the cut, drawn */
   --underline: rgba(25, 23, 18, 0.3);
   --accent: #E8A200;         /* AccentColor, Marigold */
+  --wordmark-ink-start: rgba(187, 120, 0, 0.8);  /* WordmarkInkStart */
+  --wordmark-ink-end: rgba(106, 52, 28, 0.8);    /* WordmarkInkEnd */
 
   --measure: 36rem;
   --inset: 0rem;             /* the cut's breakout; 0 until there's room for it */
@@ -30,7 +38,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #191712;        /* the ink becomes the ground */
+    /* Ground's dark value, #9A8E7B, taken down to OKLCH L 0.21 at the same
+     * hue. Primary text on it is 15.6:1, the tiers below 6.4:1 and 4.8:1. */
+    --paper: #1B1812;
     --ink: #F4F1E9;          /* Text on felt, primary */
     --ink-2: rgba(244, 241, 233, 0.6);
     --ink-3: rgba(244, 241, 233, 0.5); /* Text on felt, secondary */
@@ -38,6 +48,8 @@
     --panel: #332E28;        /* Felt base */
     --line: rgba(244, 241, 233, 0.55);
     --underline: rgba(244, 241, 233, 0.35);
+    --wordmark-ink-start: #A36200;
+    --wordmark-ink-end: #6A341C;
   }
 }
 
@@ -98,11 +110,11 @@ h1 {
 }
 
 /* The app's wordmark, outlined. Not the system face plus a `letter-spacing`:
- * the logotype's kerning is a per-pair table (round-to-round joins want the
- * most negative, r→y goes positive so the r's arm clears the y's diagonal),
- * which one tracking value can't express — and outlines mean it looks the
- * same on a machine that has never had SF Pro on it. `currentColor`, so it
- * takes the ink in both appearances. */
+ * the logotype's kerning is a per-pair table (a→z and z→e close hardest
+ * around the z's open diagonals, the stem-facing H→a and e→l ease), which one
+ * tracking value can't express — and outlines mean it looks the same on a
+ * machine that has never had SF Pro on it. The ink is the app's gold-to-
+ * chestnut gradient, stops per appearance in the tokens above. */
 .wordmark {
   --wordmark-width: 11.25rem;
   /* The H's height: its stems run the full 35.32 units of the 116.44-wide

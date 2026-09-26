@@ -51,10 +51,18 @@ shipped app's, and each is commented with its source:
   and `Joinery/Home/HomeTray.swift` (`TrayPalette`) in the app repo.
 - The accent — `AccentColor.colorset`, Marigold `#E8A200`. The app gives it
   one value for both appearances, so the site does too.
-- Dark mode reuses the app's own pairing: the ink becomes the ground, and text
-  on it takes the app's "text on felt" colors.
+- The paper — `Ground.colorset`, the app's table (`#B0A28C` light, `#9A8E7B`
+  dark), kept at its own OKLCH hue and moved in lightness: up to L 0.96 for
+  `#F9F1E3`, down to L 0.21 for `#1B1812`. The table's own values sit in the
+  middle, where no text color reads well on them; a page is mostly text.
+- Dark mode's text takes the app's "text on felt" colors.
+- The secondary ink tiers are the one place the site overrides the app. On
+  the light paper the app's 0.45 is 2.8:1, so `--ink-2` and `--ink-3` are
+  raised to 0.70 and 0.62 (6.3:1 and 4.8:1). Every text color on both papers
+  clears 4.5:1; keep it that way if either paper moves.
 
-If a token here ever disagrees with the app, the app wins.
+If a token here ever disagrees with the app, the app wins, except where it
+would take text below 4.5:1.
 
 The app is called Hazel, but its repo (`../Hazel`) keeps `Joinery` as the
 internal name of its targets, module and source folder, so paths into it like
@@ -67,7 +75,7 @@ internal name of its targets, module and source folder, so paths into it like
 | *(inline in `index.html`)* | A real cut from `PuzzleEngine`, 63 pieces (a 64 target lands on a 7×9 grid), seed 9. Drawn with `stroke="currentColor"` so CSS themes it. Sits in the reading column beside the paragraph that explains it. |
 | `assets/og.png` | The same engine and seed, 12 pieces, rendered flat for link previews. Far fewer pieces because a 63-piece cut turns to mush at thumbnail size. |
 | `assets/apple-touch-icon.png`, `assets/favicon.png` | The app icon, exported from `AppIcon.icon` by Icon Composer's `ictool`. See *Regenerating the icon*. |
-| *(inline in `index.html`)* | The wordmark, outlined. Same string, face and per-pair kern table as `Joinery/Home/HomeWordmark.swift`. |
+| *(inline in `index.html`)* | The wordmark, outlined. Same string, face, per-pair kern table and gradient ink as `Joinery/Home/HomeWordmark.swift`. |
 | `assets/home-iphone.{webp,jpg}`, `assets/home-ipad.{webp,jpg}` | Home on each device, as a `.devices` pair under the opening paragraph — the "on iPhone and iPad" of that paragraph, shown. |
 | `assets/piece.{webp,jpg}` | Pieces close up with the picture popover open, rims shaded from one direction — the relief, in "The pieces are the point". |
 | `assets/generate.{webp,jpg}` | The cut mid-animation on iPad: the left of the picture already in pieces, the grid on the right still plain, the orange cutting heads between. |
@@ -135,9 +143,16 @@ letterforms.
 swiftc -O tools/wordmark-export/main.swift -o /tmp/wordmark && /tmp/wordmark
 ```
 
-Paste the output over the `<svg>` inside `<h1 class="wordmark">`. It fills with
-`currentColor`, so it takes the ink in both appearances; the `<h1>` also holds
-the word as visually-hidden text, so the heading still has real text in it.
+Paste the output over the `<svg>` inside `<h1 class="wordmark">`, swapping its
+`role="img" aria-label="Hazel"` for `aria-hidden="true" focusable="false"`: the
+`<h1>` holds the word as visually-hidden text, so the heading still has real
+text in it.
+
+It fills with the app's gradient ink, gold at the H to chestnut at the l. The
+stops are `var(--wordmark-ink-start)` and `var(--wordmark-ink-end)`, set in
+`assets/site.css` from the app's `WordmarkInkStart` and `WordmarkInkEnd`
+colorsets — 80% alpha on light, full strength on dark — so a change to the
+colors there is an edit to those four values, not a re-run.
 
 Re-run this if `HomeWordmark.kernEm` changes in the app.
 

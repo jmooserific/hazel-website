@@ -6,6 +6,10 @@ import Foundation
 // table as Joinery/Home/HomeWordmark.swift in the app repo — the per-pair
 // values are the whole point of the thing, so they're copied here rather than
 // approximated, and a change to them there is a re-run of this.
+//
+// The ink is the app's gradient, gold at the H to chestnut at the l, across
+// the whole box as the launch image draws it. The stops are CSS variables
+// rather than colors, because they differ by appearance; site.css holds them.
 
 let text = "Hazel"
 let kernEm: [CGFloat] = [-0.030, -0.046, -0.044, -0.030, 0]
@@ -75,5 +79,5 @@ FileHandle.standardError.write(
     .data(using: .utf8)!)
 
 print("""
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 \(n(box.width)) \(n(box.height))" role="img" aria-label="Hazel"><path d="\(d)" fill="currentColor"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 \(n(box.width)) \(n(box.height))" role="img" aria-label="Hazel"><defs><linearGradient id="wordmark-ink"><stop offset="0" style="stop-color: var(--wordmark-ink-start)"/><stop offset="1" style="stop-color: var(--wordmark-ink-end)"/></linearGradient></defs><path d="\(d)" fill="url(#wordmark-ink)"/></svg>
   """)
