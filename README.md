@@ -218,9 +218,10 @@ argument about scans that hold up close.
 ### Replacing the screenshots
 
 Each is a `<picture>` with a WebP source and a JPEG fallback. iPhone shots
-(1206×2622, an iPhone 17 Pro) go out at 660×1435; iPad shots (1640×2360) at
-984×1416, which is 0.6 of the capture and the same 2.4× over the width they
-render at.
+(1260×2736, an iPhone 17 Pro Max) go out at 660×1433; iPad shots (2048×2732, a
+13-inch iPad Pro) at 1064×1419, the same 2.4× over the width they render at
+(about 443px, see below). For an iPad shot, use `-resize 1064x` in the commands
+below.
 
 Ship the **whole screen**, uncropped. Cropping to the content was the earlier
 rule and it was wrong: a crop is a claim about what the app looks like that the
@@ -235,9 +236,9 @@ Reach for `.shot` unless the second one is doing work the first can't.
 
 An iPad screen is squarer, so at a phone's width it would come out shorter
 than the phone shots around it and read as the smaller screen. `.shot.ipad`
-widens a single one to 25.5rem, which lands it at a phone shot's height.
+widens a single one to 27.7rem, which lands it at a phone shot's height.
 `.shots.devices` is the iPhone-and-iPad pair: its columns are in the ratio of
-the two aspect ratios (46fr 69.5fr), so both come out the same height. If a
+the two aspect ratios (46fr 75fr), so both come out the same height. If a
 capture size changes, those numbers change with it.
 
 ```bash
@@ -258,7 +259,7 @@ magick shot.png -resize 660x -strip -profile /tmp/shot.icc -quality 82 -sampling
 magick shot.png -resize 660x -strip -profile /tmp/shot.icc -define webp:method=6 -quality 80 assets/NAME.webp
 ```
 
-`width`/`height` on the `<img>` match the export (660×1435, or 984×1416 for iPad), so the page reserves the right
+`width`/`height` on the `<img>` match the export (660×1433, or 1064×1419 for iPad), so the page reserves the right
 space and doesn't reflow while they load. All of them are `loading="lazy"`;
 they all sit below the fold. The video does not — it is the first thing under
 the subtitle — but `preload="none"` means only its poster is fetched.
