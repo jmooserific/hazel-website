@@ -77,7 +77,7 @@ internal name of its targets, module and source folder, so paths into it like
 | `assets/apple-touch-icon.png`, `assets/favicon.png` | The app icon, exported from `AppIcon.icon` by Icon Composer's `ictool`. See *Regenerating the icon*. |
 | *(inline in `index.html`)* | The wordmark, outlined. Same string, face, per-pair kern table and gradient ink as `Joinery/Home/HomeWordmark.swift`. |
 | `assets/home-iphone.{webp,jpg}`, `assets/home-ipad.{webp,jpg}` | Home on each device, as a `.devices` pair under the opening paragraph — the "on iPhone and iPad" of that paragraph, shown. |
-| `assets/piece.{webp,jpg}` | Pieces close up with the picture popover open, rims shaded from one direction — the relief, in "The pieces are the point". |
+| `assets/piece.{webp,jpg}` | Pieces close up with the picture popover open, rims shaded from one direction — the shaded rims, in "The pieces". |
 | `assets/generate.{webp,jpg}` | The cut mid-animation on iPad: the left of the picture already in pieces, the grid on the right still plain, the orange cutting heads between. |
 | `assets/presets.{webp,jpg}` | The create sheet on Medium: the four difficulty tiles, the three chips under them, then the picture's text. Pairs with `custom`. |
 | `assets/custom.{webp,jpg}` | The same sheet on Custom, with the piece count, rotation and snap distance each on its own control. |
